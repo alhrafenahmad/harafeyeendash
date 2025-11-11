@@ -1,38 +1,77 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
+  <!-- 🔗 قاعدة المسار للتطبيق -->
   <!--<base href="/">-->
   <base href="./">
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="تطبيق حرفيين - لوحة التحكم">
 
-  <!-- iOS meta tags & icons -->
+  <!-- 📱 إعدادات PWA -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="harafeyeendash">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <meta name="apple-mobile-web-app-title" content="Harafeyeen Dash">
+  <link rel="apple-touch-icon" href="icons/Logo.png">
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <!-- 🧭 أيقونة التطبيق -->
+  <link rel="icon" type="image/png" href="icons/Logo.png"/>
 
-  <title>harafeyeendash</title>
+  <title>Harafeyeen Dashboard</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- ✅ مكتبات Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js"></script>
+
+  <!-- ✅ إعداد Firebase -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyB0FaKcgTm0ULE4Avg3oT8mrwVgFZQ92ng",
+      authDomain: "hirafiyin-99cd5.firebaseapp.com",
+      projectId: "hirafiyin-99cd5",
+      storageBucket: "hirafiyin-99cd5.firebasestorage.app",
+      messagingSenderId: "558500384833",
+      appId: "1:558500384833:web:cbe8998af6070923f5f6c0",
+      measurementId: "G-8EV76Y8BF7"
+    };
+
+    // 🔥 تهيئة Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const analytics = firebase.analytics();
+    const messaging = firebase.messaging();
+
+    // 🔔 طلب إذن المستخدم للإشعارات
+    Notification.requestPermission().then((permission) => {
+      if (permission === "granted") {
+        messaging.getToken({
+          vapidKey: "BJZZETCv9n_vl0cQuVC4Pe1w3x8gFD153e_le6BAY2XKt02uKpWWV_tp-L21SMVzrAskZ8B5MMii1L9on6G6Rro" // 👈 استبدل هذا بمفتاح VAPID من FCM
+        }).then((currentToken) => {
+          if (currentToken) {
+            console.log("✅ Web FCM Token:", currentToken);
+          } else {
+            console.warn("⚠️ لم يتم الحصول على توكن بعد!");
+          }
+        }).catch((err) => {
+          console.error("❌ خطأ في جلب التوكن:", err);
+        });
+      } else {
+        console.warn("🚫 تم رفض الإذن بالإشعارات");
+      }
+    });
+
+    // 📩 استقبال الإشعارات أثناء فتح الصفحة
+    messaging.onMessage((payload) => {
+      console.log("📨 إشعار جديد:", payload);
+      const { title, body } = payload.notification;
+      new Notification(title, { body });
+    });
+  </script>
 </head>
+
 <body>
-  <script src="flutter_bootstrap.js" async></script>
+<!-- 🧩 سكربت Flutter -->
+<script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
